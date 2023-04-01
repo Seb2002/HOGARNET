@@ -1,0 +1,40 @@
+
+-- PAYPAL -- 
+tiendahogarnet@gmail.com
+
+Hogarnet_2022
+
+
+Client Id
+AaQxDxGh4Espn3JLPNQU1iEElgoQcv-eXR_TbjxZgYjyx9QBhPUNFDB7o6nvIFiHWVae6yAHDPATswmH
+
+
+Secret
+EKEFKX_PLDQg1xrwfZOpJieOzGhKSbvW9ZXLWgjE8t1yneC_7nHHn1LOLH2Lk8MpRgihZYzWLqDpgNxI
+
+
+Tienda
+sb-glxfz22262361@business.example.com
+Contraseña
+kRQ_1z0R
+
+
+Cliente
+sb-sjlkl22262864@personal.example.com
+Contraseña
+GvJg*3x]
+
+
+Tarjeta de pruebas
+
+Generated Credit Card Details
+
+Card Type: Visa
+Card Number: 4032038490290651
+Expiration Date: 08/2023
+CVV: 787
+
+https://api-m.sandbox.paypal.com
+https://api-m.sandbox.paypal.com/v2/checkout/orders
+
+6UW06535S77393017

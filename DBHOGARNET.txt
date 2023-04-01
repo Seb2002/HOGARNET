@@ -1,0 +1,944 @@
+USE master
+
+IF EXISTS (
+		SELECT *
+		FROM sysdatabases
+		WHERE (name = 'DBHOGARNET')
+		)
+BEGIN
+	DROP DATABASE DBHOGARNET
+END
+
+CREATE DATABASE DBHOGARNET
+
+GO
+USE DBHOGARNET
+
+CREATE TABLE CATEGORIA (
+	IdCategoria INT PRIMARY KEY identity,
+	Descripcion VARCHAR(100),
+	Activo INT DEFAULT 1,
+	FechaRegistro DATETIME DEFAULT getdate()
+	)
+
+CREATE TABLE MARCA (
+	IdMarca INT PRIMARY KEY identity,
+	Descripcion VARCHAR(100),
+	Activo BIT DEFAULT 1,
+	FechaRegistro DATETIME DEFAULT getdate()
+	)
+
+CREATE TABLE PRODUCTO (
+	IdProducto INT PRIMARY KEY identity,
+	Nombre VARCHAR(500),
+	Descripcion VARCHAR(500),
+	IdMarca INT REFERENCES Marca(IdMarca),
+	IdCategoria INT REFERENCES Categoria(IdCategoria),
+	Precio DECIMAL(10, 2) DEFAULT 0,
+	Stock INT,
+	RutaImagen VARCHAR(100),
+	NombreImagen VARCHAR(100),
+	Activo BIT DEFAULT 1,
+	FechaRegistro DATETIME DEFAULT getdate()
+	)
+
+CREATE TABLE CLIENTE (
+	IdCliente INT PRIMARY KEY identity,
+	Nombres VARCHAR(100),
+	Apellidos VARCHAR(100),
+	Correo VARCHAR(100),
+	Clave VARCHAR(150),
+	Reestablecer BIT DEFAULT 0,
+	FechaRegistro DATETIME DEFAULT getdate()
+	)
+
+CREATE TABLE CARRITO (
+	IdCarrito INT PRIMARY KEY identity,
+	IdCliente INT REFERENCES CLIENTE(IdCliente),
+	IdProducto INT REFERENCES PRODUCTO(IdProducto),
+	Cantidad INT
+	)
+
+CREATE TABLE VENTA (
+	IdVenta INT PRIMARY KEY identity,
+	IdCliente INT REFERENCES CLIENTE(idCliente),
+	TotalProducto INT,
+	MontoTotal DECIMAL(10, 2),
+	Contacto VARCHAR(50),
+	IdDistrito VARCHAR(10),
+	Telefono VARCHAR(50),
+	Direccion VARCHAR(500),
+	IdTransaccion VARCHAR(50),
+	FechaVenta DATETIME DEFAULT getdate()
+	)
+
+CREATE TABLE DETALLE_VENTA (
+	IdDetalleVenta INT PRIMARY KEY identity,
+	IdVenta INT REFERENCES VENTA(IdVenta),
+	IdProducto INT REFERENCES PRODUCTO(IdProducto),
+	Cantidad INT,
+	Total DECIMAL(10, 2)
+	)
+
+CREATE TABLE USUARIO (
+	IdUsuario INT PRIMARY KEY identity,
+	Nombres VARCHAR(100),
+	Apellidos VARCHAR(100),
+	Correo VARCHAR(100),
+	Clave VARCHAR(100),
+	Reestablecer BIT DEFAULT 1,
+	Activo BIT DEFAULT 1,
+	FechaRegistro DATETIME DEFAULT getdate()
+	)
+
+CREATE TABLE DEPARTAMENTO (
+	IdDepartamento VARCHAR(2) NOT NULL,
+	Descripcion VARCHAR(45) NOT NULL
+	)
+
+CREATE TABLE PROVINCIA (
+	IdProvincia VARCHAR(4) NOT NULL,
+	Descripcion VARCHAR(45) NOT NULL,
+	IdDepartamento VARCHAR(2) NOT NULL
+	)
+
+CREATE TABLE DISTRITO (
+	IdDistrito VARCHAR(6) NOT NULL,
+	Descripcion VARCHAR(45) NOT NULL,
+	IdProvincia VARCHAR(4) NOT NULL,
+	IdDepartamento VARCHAR(2) NOT NULL
+	)
+
+-- INSERTANDO DATOS A LAS TABLAS 
+
+USE DBHOGARNET
+
+INSERT INTO USUARIO (
+	Nombres,
+	Apellidos,
+	Correo,
+	Clave
+	)
+VALUES (
+	'Juan Sebastian',
+	'Mahecha Benavides',
+	'jusemabe@gmail.com',
+	'a6098ce913379578a5d6712807af19d6f3114ee632555e0e76abbc9b545c5a02'
+	)
+
+INSERT INTO CATEGORIA (Descripcion)
+VALUES ('Tecnologia'),
+	('Muebles'),
+	('Dormitorio'),
+	('Deportes')
+
+INSERT INTO MARCA (Descripcion)
+VALUES ('SONYTE'),
+	('HPTE'),
+	('LGTE'),
+	('HYUNDAITE'),
+	('CANONTE'),
+	('ROBERTA ALLENTE')
+
+INSERT INTO DEPARTAMENTO (
+	IdDepartamento,
+	Descripcion
+	)
+VALUES (
+	'01',
+	'Arequipa'
+	),
+	(
+	'02',
+	'Ica'
+	),
+	(
+	'03',
+	'Lima'
+	)
+
+INSERT INTO PROVINCIA (
+	IdProvincia,
+	Descripcion,
+	IdDepartamento
+	)
+VALUES (
+	'0101',
+	'Arequipa',
+	'01'
+	),
+	(
+	'0102',
+	'Camaná',
+	'01'
+	),
+	--ICA - PROVINCIAS
+	(
+	'0201',
+	'Ica ',
+	'02'
+	),
+	(
+	'0202',
+	'Chincha ',
+	'02'
+	),
+	--LIMA - PROVINCIAS
+	(
+	'0301',
+	'Lima ',
+	'03'
+	),
+	(
+	'0302',
+	'Barranca ',
+	'03'
+	)
+
+INSERT INTO DISTRITO (
+	IdDistrito,
+	Descripcion,
+	IdProvincia,
+	IdDepartamento
+	)
+VALUES (
+	'010101',
+	'Nieva',
+	'0101',
+	'01'
+	),
+	(
+	'010102',
+	'El Cenepa',
+	'0101',
+	'01'
+	),
+	(
+	'010201',
+	'Camaná',
+	'0102',
+	'01'
+	),
+	(
+	'010202',
+	'José María Quimper',
+	'0102',
+	'01'
+	),
+	--ICA - DISTRITO
+	(
+	'020101',
+	'Ica',
+	'0201',
+	'02'
+	),
+	(
+	'020102',
+	'La Tinguiña',
+	'0201',
+	'02'
+	),
+	(
+	'020201',
+	'Chincha Alta',
+	'0202',
+	'02'
+	),
+	(
+	'020202',
+	'Alto Laran',
+	'0202',
+	'02'
+	),
+	--LIMA - DISTRITO
+	(
+	'030101',
+	'Lima',
+	'0301',
+	'03'
+	),
+	(
+	'030102',
+	'Ancón',
+	'0301',
+	'03'
+	),
+	(
+	'030201',
+	'Barranca',
+	'0302',
+	'03'
+	),
+	(
+	'030202',
+	'Paramonga',
+	'0302',
+	'03'
+	)
+
+--INSERTANDO UN NUEVO USUARIO
+
+
+INSERT INTO USUARIO (
+	Nombres,
+	Apellidos,
+	Correo,
+	Clave
+	)
+VALUES (
+	'Frand',
+	'Casas',
+	'Frand@example.com',
+	'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3'
+	)
+
+
+-- PROCEDIMIENTOS ALMACENADOS USUARIO
+
+
+
+USE DBHOGARNET
+GO
+
+CREATE PROCEDURE sp_RegistrarUsuario (
+	@Nombres VARCHAR(100),
+	@Apellidos VARCHAR(100),
+	@Correo VARCHAR(100),
+	@Clave VARCHAR(100),
+	@Activo BIT,
+	@Mensaje VARCHAR(500) OUTPUT,
+	@Resultado INT OUTPUT
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+
+	IF NOT EXISTS (
+			SELECT *
+			FROM USUARIO
+			WHERE CORREO = @Correo
+			)
+	BEGIN
+		INSERT INTO USUARIO (
+			Nombres,
+			Apellidos,
+			Correo,
+			Clave,
+			Activo
+			)
+		VALUES (
+			@Nombres,
+			@Apellidos,
+			@Correo,
+			@Clave,
+			@Activo
+			)
+
+		SET @Resultado = SCOPE_IDENTITY()
+	END
+	ELSE
+		SET @Mensaje = 'El correo del usuario ya existe'
+END
+
+
+GO
+
+CREATE PROCEDURE sp_EditarUsuario (
+	@IdUsuario INT,
+	@Nombres VARCHAR(100),
+	@Apellidos VARCHAR(100),
+	@Correo VARCHAR(100),
+	@Activo BIT,
+	@Mensaje VARCHAR(500) OUTPUT,
+	@Resultado BIT OUTPUT
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+
+	IF NOT EXISTS (
+			SELECT *
+			FROM USUARIO
+			WHERE Correo = @Correo
+				AND IdUsuario != @IdUsuario
+			)
+	BEGIN
+		UPDATE TOP (1) USUARIO
+		SET Nombres = @Nombres,
+			Apellidos = @Apellidos,
+			Correo = @Correo,
+			Activo = @Activo
+		WHERE IdUsuario = @IdUsuario
+
+		SET @Resultado = 1
+	END
+	ELSE
+		SET @Mensaje = 'El Correo del usuario ya existe'
+END
+
+-- PROCEDIMIENTOS ALMACENADOS CATEGORIA
+
+
+USE DBHOGARNET
+GO
+
+CREATE PROCEDURE sp_RegistrarCategoria (
+	@Descripcion VARCHAR(100),
+	@Activo BIT,
+	@Mensaje VARCHAR(500) OUTPUT,
+	@Resultado INT OUTPUT
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+
+	IF NOT EXISTS (
+			SELECT *
+			FROM CATEGORIA
+			WHERE Descripcion = @Descripcion
+			)
+	BEGIN
+		INSERT INTO CATEGORIA (
+			Descripcion,
+			Activo
+			)
+		VALUES (
+			@Descripcion,
+			@Activo
+			)
+
+		SET @Resultado = SCOPE_IDENTITY()
+	END
+	ELSE
+		SET @Mensaje = 'La categoria ya existe.'
+END
+GO
+
+CREATE PROCEDURE sp_EditarCategoria (
+	@IdCategoria INT,
+	@Descripcion VARCHAR(100),
+	@Activo BIT,
+	@Mensaje VARCHAR(500) OUTPUT,
+	@Resultado BIT OUTPUT
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+
+	IF NOT EXISTS (
+			SELECT *
+			FROM CATEGORIA
+			WHERE Descripcion = @Descripcion
+				AND IdCategoria != @IdCategoria
+			)
+	BEGIN
+		UPDATE TOP (1) CATEGORIA
+		SET Descripcion = @Descripcion,
+			Activo = @Activo
+		WHERE IdCategoria = @IdCategoria
+
+		SET @Resultado = 1
+	END
+	ELSE
+		SET @Mensaje = 'La categoria ya existe.'
+END
+GO
+
+CREATE PROCEDURE sp_EliminarCategoria (
+	@IdCategoria INT,
+	@Mensaje VARCHAR(500) OUTPUT,
+	@Resultado BIT OUTPUT
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+
+	IF NOT EXISTS (
+			SELECT *
+			FROM PRODUCTO AS P
+			INNER JOIN CATEGORIA AS C ON C.IdCategoria = P.IdCategoria
+			WHERE P.IdCategoria = @IdCategoria
+			)
+	BEGIN
+		DELETE TOP (1)
+		FROM CATEGORIA
+		WHERE IdCategoria = @IdCategoria
+
+		SET @Resultado = 1
+	END
+	ELSE
+		SET @Mensaje = 'La categoria se encuentra relacionada a un producto.'
+END
+
+
+-- PROCEDIMIENTOS ALMACENADOS MARCA
+
+USE DBHOGARNET
+GO
+
+CREATE PROCEDURE sp_RegistrarMarca (
+	@Descripcion VARCHAR(100),
+	@Activo BIT,
+	@Mensaje VARCHAR(500) OUTPUT,
+	@Resultado INT OUTPUT
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+
+	IF NOT EXISTS (
+			SELECT *
+			FROM MARCA
+			WHERE Descripcion = @Descripcion
+			)
+	BEGIN
+		INSERT INTO MARCA (
+			Descripcion,
+			Activo
+			)
+		VALUES (
+			@Descripcion,
+			@Activo
+			)
+
+		SET @Resultado = SCOPE_IDENTITY()
+	END
+	ELSE
+		SET @Mensaje = 'La marca ya existe'
+END
+GO
+
+CREATE PROCEDURE sp_EditarMarca (
+	@IdMarca INT,
+	@Descripcion VARCHAR(100),
+	@Activo BIT,
+	@Mensaje VARCHAR(500) OUTPUT,
+	@Resultado BIT OUTPUT
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+
+	IF NOT EXISTS (
+			SELECT *
+			FROM MARCA
+			WHERE Descripcion = @Descripcion
+				AND IdMarca != @IdMarca
+			)
+	BEGIN
+		UPDATE TOP (1) MARCA
+		SET Descripcion = @Descripcion,
+			Activo = @Activo
+		WHERE IdMarca = @IdMarca
+
+		SET @Resultado = 1
+	END
+	ELSE
+		SET @Mensaje = 'La marca ya existe'
+END
+GO
+
+CREATE PROCEDURE sp_EliminarMarca (
+	@IdMarca INT,
+	@Mensaje VARCHAR(500) OUTPUT,
+	@Resultado BIT OUTPUT
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+
+	IF NOT EXISTS (
+			SELECT *
+			FROM PRODUCTO AS P
+			INNER JOIN MARCA AS M ON M.IdMarca = P.IdMarca
+			WHERE P.IdMarca = @IdMarca
+			)
+	BEGIN
+		DELETE TOP (1)
+		FROM MARCA
+		WHERE IdMarca = @IdMarca
+
+		SET @Resultado = 1
+	END
+	ELSE
+		SET @Mensaje = 'La marca se encuentra relacionada a un producto.'
+END
+
+
+-- PROCEDIMIENTOS ALMACENADOS PRODUCTO
+
+USE DBHOGARNET
+GO
+
+CREATE PROC sp_EliminarProducto(
+	@IdProducto INT,
+	@Mensaje VARCHAR(500) OUTPUT,
+	@Resultado BIT OUTPUT
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+
+	IF NOT EXISTS (
+			SELECT *
+			FROM DETALLE_VENTA AS dv
+			INNER JOIN PRODUCTO AS P ON P.IdProducto = dv.IdProducto
+			WHERE P.IdProducto = @IdProducto
+			)
+	BEGIN
+		DELETE TOP (1)
+		FROM PRODUCTO
+		WHERE IdProducto = @IdProducto
+
+		SET @Resultado = 1
+	END
+	ELSE
+		SET @Mensaje = 'El producto se encuentra relacionado a una venta'
+END
+
+GO
+
+CREATE PROC sp_EditarProducto (
+	@IdProducto INT,
+	@Nombre VARCHAR(100),
+	@Descripcion VARCHAR(100),
+	@IdMarca VARCHAR(100),
+	@IdCategoria VARCHAR(100),
+	@Precio DECIMAL(10, 2),
+	@Stock INT,
+	@Activo BIT,
+	@Mensaje VARCHAR(500) OUTPUT,
+	@Resultado BIT OUTPUT
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+
+	IF NOT EXISTS (
+			SELECT *
+			FROM PRODUCTO
+			WHERE Nombre = @Nombre
+				AND IdProducto != @IdProducto
+			)
+	BEGIN
+		UPDATE PRODUCTO
+		SET Nombre = @Nombre,
+			Descripcion = @Descripcion,
+			IdMarca = @IdMarca,
+			IdCategoria = @IdCategoria,
+			Precio = @Precio,
+			Stock = @Stock,
+			Activo = @Activo
+		WHERE IdProducto = @IdProducto
+
+		SET @Resultado = 1
+	END
+	ELSE
+		SET @Mensaje = 'El producto ya existe'
+END
+
+GO
+
+CREATE PROCEDURE sp_RegistrarProducto (
+	@Nombre VARCHAR(100),
+	@Descripcion VARCHAR(100),
+	@IdMarca VARCHAR(100),
+	@IdCategoria VARCHAR(100),
+	@Precio DECIMAL(10, 2),
+	@Stock INT,
+	@Activo BIT,
+	@Mensaje VARCHAR(500) OUTPUT,
+	@Resultado INT OUTPUT
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+
+	IF NOT EXISTS (
+			SELECT *
+			FROM PRODUCTO
+			WHERE Nombre = @Nombre
+			)
+	BEGIN
+		INSERT INTO PRODUCTO (
+			Nombre,
+			Descripcion,
+			IdMarca,
+			IdCategoria,
+			Precio,
+			Stock,
+			Activo
+			)
+		VALUES (
+			@Nombre,
+			@Descripcion,
+			@IdMarca,
+			@IdCategoria,
+			@Precio,
+			@Stock,
+			@Activo
+			)
+
+		SET @Resultado = SCOPE_IDENTITY()
+	END
+	ELSE
+		SET @Mensaje = 'El producto ya existe'
+END
+
+
+-- PROCEDIMIENTOS ALMACENADOS REPORTEDASHBOARD
+
+USE DBHOGARNET
+GO
+
+
+CREATE PROC sp_ReporteDashboard
+AS
+BEGIN
+	SELECT (
+			SELECT COUNT(*)
+			FROM CLIENTE
+			) [TotalCliente],
+		(
+			SELECT ISNULL(SUM(Cantidad), 0)
+			FROM DETALLE_VENTA
+			) [TotalVenta],
+		(
+			SELECT COUNT(*)
+			FROM PRODUCTO
+			) [TotalProducto]
+END
+
+
+
+-- PROCEDIMIENTOS ALMACENADOS REPORTEVENTAS
+
+USE DBHOGARNET
+GO
+
+CREATE PROCEDURE sp_ReporteVentas (
+	@fechainicio VARCHAR(10),
+	@fechafin VARCHAR(10),
+	@idtransaccion VARCHAR(50)
+	)
+AS
+BEGIN
+	SET DATEFORMAT dmy;
+
+	SELECT CONVERT(CHAR(10), V.FechaVenta, 103) AS [FechaVenta],
+		CONCAT (
+			C.Nombres,
+			C.Apellidos
+			) AS [Cliente],
+		P.Nombre AS [Producto],
+		P.Precio,
+		DV.Cantidad,
+		DV.Total,
+		V.IdTransaccion
+	FROM DETALLE_VENTA AS DV
+	INNER JOIN PRODUCTO AS P ON P.IdProducto = DV.IdProducto
+	INNER JOIN VENTA AS V ON V.IdVenta = DV.IdVenta
+	INNER JOIN CLIENTE C ON C.IdCliente = V.IdCliente
+	WHERE CONVERT(DATE, V.FechaVenta) BETWEEN @fechainicio
+			AND @fechafin
+		AND V.IdTransaccion = IIF(@idtransaccion = '', V.IdTransaccion, @idtransaccion)
+END
+
+
+
+-- PROCEDIMIENTOS ALMACENADOS CLIENTE
+
+USE DBHOGARNET
+GO
+
+CREATE PROC sp_RegistrarCliente(
+	@Nombres VARCHAR(100),
+	@Apellidos VARCHAR(100),
+	@Correo VARCHAR(100),
+	@Clave VARCHAR(100),
+	@Mensaje VARCHAR(500) output,
+	@Resultado int output
+	)
+AS
+BEGIN
+	SET @Resultado = 0
+	IF NOT EXISTS (SELECT * FROM CLIENTE WHERE Correo = @Correo)
+	BEGIN 
+		INSERT INTO CLIENTE(Nombres,Apellidos,Correo,Clave,Reestablecer)
+		VALUES (@Nombres,@Apellidos,@Correo,@Clave,0)
+
+		SET @Resultado = SCOPE_IDENTITY()
+	END
+	ELSE 
+		SET @Mensaje = 'El correo del usuario digitado ya existe'
+END
+
+
+-- PROCEDIMIENTOS ALMACENADOS EXISTE CARRITO
+
+USE DBHOGARNET
+GO
+
+
+CREATE PROC sp_ExisteCarrito(
+@IdCliente int,
+@IdProducto int,
+@Resultado bit output
+)
+AS
+BEGIN
+	IF EXISTS(SELECT * FROM CARRITO WHERE IdCliente = @IdCliente AND Idproducto = @IdProducto)
+		SET @Resultado = 1
+    ELSE	
+		SET @Resultado = 0
+END
+
+
+-- PROCEDIMIENTOS ALMACENADOS OPERACIONES CARRITO
+
+USE DBHOGARNET
+GO
+
+
+
+CREATE PROC sp_OperacionCarrito(
+@IdCliente int,
+@IdProducto int,
+@Sumar bit,
+@Mensaje varchar(500) output,
+@Resultado bit output
+)
+AS 
+BEGIN 
+	SET	@Resultado = 1
+	SET @Mensaje = ''
+
+	DECLARE @existecarrito 
+	BIT = IIF(EXISTS(SELECT * FROM CARRITO WHERE IdCliente = @IdCliente AND IdProducto = @IdProducto),1,0)
+	DECLARE @stockproducto 
+	INT = (SELECT Stock FROM PRODUCTO WHERE Idproducto = @IdProducto)
+
+	BEGIN TRY
+		
+		BEGIN TRANSACTION OPERACION 
+
+		IF(@Sumar = 1)
+		BEGIN 
+			IF(@stockproducto > 0)
+			BEGIN
+				IF(@existecarrito = 1)
+					UPDATE CARRITO SET Cantidad = Cantidad + 1 WHERE IdCliente = @IdCliente AND Idproducto = @IdProducto
+				ELSE	
+					INSERT INTO CARRITO(IdCliente,Idproducto,Cantidad) 
+					VALUES (@IdCliente,@IdProducto,1)
+				UPDATE Producto SET Stock = Stock - 1 WHERE Idproducto = @IdProducto
+			END
+			ELSE
+			BEGIN	
+				SET @Resultado = 0
+				SET @Mensaje = 'El producto no cuenta con stock disponible'
+			END
+		END
+		ELSE
+		BEGIN
+			UPDATE CARRITO SET Cantidad = Cantidad - 1 WHERE IdCliente = @IdCliente AND Idproducto = @IdProducto
+			UPDATE PRODUCTO SET Stock = Stock + 1 WHERE Idproducto = @IdProducto
+		END
+
+		COMMIT TRANSACTION OPERACION
+
+	END TRY
+	BEGIN CATCH 
+		SET @Resultado = 0
+		SET @Mensaje = ERROR_MESSAGE()
+		ROLLBACK TRANSACTION OPERACION 
+	END CATCH
+END
+
+
+
+GO
+
+
+CREATE PROC sp_EliminarCarrito(
+@IdCliente int,
+@IdProducto int,
+@Resultado bit output
+)
+as 
+begin 
+
+	set @Resultado = 1
+	declare @cantidadproducto int = (select Cantidad from CARRITO where IdCliente = @IdCliente and IdProducto = @IdProducto)
+
+	BEGIN TRY
+		BEGIN TRANSACTION OPERACION 
+
+		UPDATE PRODUCTO SET Stock = Stock + @cantidadproducto WHERE IdProducto = @IdProducto
+		DELETE TOP (1) FROM CARRITO WHERE IdCliente = @IdCliente AND IdProducto = @IdProducto
+
+		COMMIT TRANSACTION OPERACION 
+
+	END TRY
+	BEGIN CATCH 
+		SET @Resultado = 0
+		ROLLBACK TRANSACTION OPERACION 
+	END CATCH 
+END
+
+
+
+-- PROC VENTA 
+
+CREATE TYPE [dbo].[EDetalle_Venta]AS TABLE(
+	[IdProducto]INT NULL,
+	[Cantidad]INT NULL,
+	[Total]DECIMAL (10,2)NULL
+)
+
+
+create procedure usp_RegistrarVenta(
+@IdCliente int,
+@TotalProducto int,
+@MontoTotal decimal(18,2),
+@Contacto varchar(100),
+@IdDistrito varchar(6),
+@Telefono varchar(10),
+@Direccion varchar(100),
+@IdTransaccion varchar(50),
+@DetalleVenta [EDetalle_Venta] READONLY,
+@Resultado bit output,
+@Mensaje varchar(500) output
+)
+AS
+BEGIN
+	BEGIN TRY
+		DECLARE @idventa int = 0
+		SET @Resultado = 1
+		SET @Mensaje = ''
+
+		BEGIN TRANSACTION registro
+
+		INSERT INTO VENTA (IdCliente,TotalProducto,MontoTotal,Contacto,IdDistrito,Telefono,Direccion,IdTransaccion)
+		VALUES (@IdCliente,@TotalProducto,@MontoTotal,@Contacto,@IdDistrito,@Telefono,@Direccion,@IdTransaccion)
+
+		SET @idventa = SCOPE_IDENTITY()
+
+		INSERT INTO DETALLE_VENTA(IdVenta,IdProducto,Cantidad,Total)
+		SELECT @idventa,IdProducto,Cantidad,Total from @DetalleVenta
+
+		DELETE FROM CARRITO WHERE IdCliente = @IdCliente
+
+		COMMIT TRANSACTION registro
+
+	END TRY 
+	BEGIN CATCH 
+		SET @Resultado = 0
+		SET @Mensaje = ERROR_MESSAGE()
+		ROLLBACK TRANSACTION registro
+	END CATCH
+END
+
+ 
+
+
